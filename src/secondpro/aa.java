@@ -9,7 +9,7 @@ public class aa {
     //FileFilter filter;
     public static void main(String[] args) {
         aa Fred = new aa();
-        System.out.print("This is arg0: " + args[0]);
+        System.out.print("This is arg0:" + args[0]);
         File folder = new File(args[0]);
         //Fred.setFilter();
         Fred.lister(folder);
