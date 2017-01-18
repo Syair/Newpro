@@ -1,37 +1,67 @@
 package secondpro;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
 /**
  * Created by wu on 1/15/2017.
  */
 public class aa {
-    //FileFilter filter;
+    int count = 0;
+    long filesize = 0;
+    StringBuilder sb;
+    FileFilter filter;
     public static void main(String[] args) {
         aa Fred = new aa();
-        System.out.print("This is arg0:" + args[0]);
+        Fred.sb = new StringBuilder();
         File folder = new File(args[0]);
-        //Fred.setFilter();
+        File targetFile = new File(args[1]);
+        System.out.println("Statistics on Files Found:");
+        System.out.println("**************************");
+        System.out.println("Source Path: " + args[0]);//C:\Test\Tree
+        //System.out.println("Target Path: " + args[1]);//C:\Test\TreeFiles.txt
+        System.out.println("Extensions:");
         Fred.lister(folder);
+        System.out.println("Files Found: " + Fred.count);//14
+        long mibSize = Fred.filesize/1024L/1024L; //leave it to 2 deci
+        System.out.println("Total size: "+ mibSize + " MiB (" + Fred.filesize +" bytes)");
+        System.out.println("Files:");
+        System.out.println("*****************");
+        System.out.println(Fred.sb);
+        try {
+            PrintWriter writer = new PrintWriter(targetFile);
+            writer.print(Fred.sb);
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        //Fred.setFilter();
     }
 
-//    public void setFilter(){
-//        this.filter = new FileFilter() {
-//            @Override
-//            public boolean accept(File pathname) {
-//                return pathname.getName().endsWith(".class");
-//            }
-//        };
-//    }
+    public void setFilter(){
+        this.filter = new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().endsWith(".class");
+            }
+        };
+    }
+
     public void lister(File folder){
-        File[] fileList = folder.listFiles();
+        File[] fileList = folder.listFiles(this.filter);
         for (File subFile : fileList) {
             if (subFile.isDirectory()) {
                 lister(subFile);
             } else {
-                if (subFile.getName().endsWith(".class")){
-                    System.out.println(" sub file: " + subFile.getAbsolutePath());
-                }
+                //if (subFile.getName().endsWith(".class")){
+                    this.count ++;
+                    filesize = filesize + subFile.length();
+                    this.sb.append(subFile.getAbsolutePath());//System.out.println(subFile.getAbsolutePath());
+                    this.sb.append('\n');
+                //}
             }
         }
     }
